@@ -14,7 +14,7 @@ Copy the files from the `/Digital/lib` folder into the `/common` folder - the `.
 ## Projects
 
 * [Ben Eater's 8-bit Computer from ICs](eater_ic/README.md)
-* TODO: Eater 8-bit using Digital components
+* [Ben Eater's 8-bit Computer using native Digital components](eater_digital/README.md)
 * TODO: [SAP-6502](https://www.youtube.com/playlist?list=PLjQDRjQfW-85S5QkX8wZbkqichM6TLYYt) computer using Digital components
 * TODO: [Ben Eater's 6502 programming tutorial](https://www.youtube.com/playlist?list=PLowKtXNTBypFbtuVMUVXNR0z1mu7dp7eH) implemented using Digital components
 * [Ben Eater's 8-bit Computer built from relays](eater_relay/README.md)
