@@ -1263,7 +1263,7 @@
       <elementAttributes>
         <entry>
           <string>Label</string>
-          <string>A Register</string>
+          <string>Output Register</string>
         </entry>
         <entry>
           <string>Bits</string>
