@@ -9,5 +9,5 @@ And more seriously here: https://groups.google.com/a/groups.riscv.org/g/isa-dev/
 A RISC-V Intro book: http://home.ustc.edu.cn/~louwenqi/reference_books_tools/Computer%20Organization%20and%20Design%20RISC-V%20edition.pdf
 
 
-Another starting point: https://github.com/HarieshAnbalagan/RV32I/tree/main - a RV32I processor design.
+Another starting point: https://github.com/HarieshAnbalagan/RV32I/tree/main - a RV32I processor design. This one is turning out to be the most useful. Between it and the RISC-V documentation, that is most of the source material for this.
 
