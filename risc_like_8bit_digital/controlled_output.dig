@@ -103,6 +103,16 @@
       </elementAttributes>
       <pos x="400" y="460"/>
     </visualElement>
+    <visualElement>
+      <elementName>Out</elementName>
+      <elementAttributes>
+        <entry>
+          <string>Label</string>
+          <string>TRG</string>
+        </entry>
+      </elementAttributes>
+      <pos x="560" y="480"/>
+    </visualElement>
   </visualElements>
   <wires>
     <wire>
@@ -111,7 +121,15 @@
     </wire>
     <wire>
       <p1 x="420" y="400"/>
+      <p2 x="440" y="400"/>
+    </wire>
+    <wire>
+      <p1 x="440" y="400"/>
       <p2 x="520" y="400"/>
+    </wire>
+    <wire>
+      <p1 x="440" y="480"/>
+      <p2 x="560" y="480"/>
     </wire>
     <wire>
       <p1 x="320" y="420"/>
@@ -144,6 +162,10 @@
     <wire>
       <p1 x="520" y="400"/>
       <p2 x="520" y="420"/>
+    </wire>
+    <wire>
+      <p1 x="440" y="400"/>
+      <p2 x="440" y="480"/>
     </wire>
   </wires>
   <measurementOrdering/>
