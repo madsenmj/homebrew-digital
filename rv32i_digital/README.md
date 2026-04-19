@@ -27,3 +27,18 @@ Workload for loading program into rom:
 4. In the newly created `rom.hex` file, copy the hex code lines
 5. Open the `rom.hex` file in the `rv32i_digital` folder and paste the hex code lines after the `v2.0 raw` line
 
+
+## TODO: 
+
+* Break this up into sections and explain each section as a tutorial 
+    * Clock
+    * Instruction ROM
+    * Program counter
+    * Control unit
+    * Immediate unit
+    * ALU
+    * CU
+    * Registers
+    * ...
+* Include a README for each section (added, cumulative) and store them in numbered subfolders
+* Include a `.rvi` file and the `.hex` file for each section for testing the new functionality

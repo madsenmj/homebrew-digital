@@ -7360,7 +7360,7 @@
         </entry>
         <entry>
           <string>RectWidth</string>
-          <int>184</int>
+          <int>224</int>
         </entry>
       </elementAttributes>
       <pos x="-1220" y="-620"/>
@@ -8439,7 +8439,7 @@
 0111 - AND
 1000 - SUB
 1101 - SRA
-Others -</string>
+1111 - UNKNOWN</string>
         </entry>
       </elementAttributes>
       <pos x="3920" y="-500"/>
@@ -8452,13 +8452,14 @@ Others -</string>
           <string>funct3[14:12]
 000 - BEQ
 001 - BNE
+010 - UNKNOWN
 100 - BLT
 101 - BGE
 110 - BLTU
 111 - BGEU</string>
         </entry>
       </elementAttributes>
-      <pos x="4660" y="-340"/>
+      <pos x="4220" y="-480"/>
     </visualElement>
     <visualElement>
       <elementName>Tunnel</elementName>
@@ -10628,16 +10629,16 @@ I_ALU_TYPE</string>
       <elementName>Multiplexer</elementName>
       <elementAttributes>
         <entry>
-          <string>flipSelPos</string>
-          <boolean>true</boolean>
+          <string>Selector Bits</string>
+          <int>3</int>
         </entry>
         <entry>
           <string>Bits</string>
           <int>4</int>
         </entry>
         <entry>
-          <string>Selector Bits</string>
-          <int>3</int>
+          <string>flipSelPos</string>
+          <boolean>true</boolean>
         </entry>
       </elementAttributes>
       <pos x="3440" y="-1540"/>
@@ -10929,12 +10930,12 @@ I_ALU_TYPE</string>
           <long>4</long>
         </entry>
         <entry>
-          <string>intFormat</string>
-          <intFormat>bin</intFormat>
-        </entry>
-        <entry>
           <string>Bits</string>
           <int>3</int>
+        </entry>
+        <entry>
+          <string>intFormat</string>
+          <intFormat>bin</intFormat>
         </entry>
       </elementAttributes>
       <pos x="3540" y="-1080"/>
@@ -11928,12 +11929,12 @@ I_ALU_TYPE</string>
           <long>3</long>
         </entry>
         <entry>
-          <string>intFormat</string>
-          <intFormat>bin</intFormat>
-        </entry>
-        <entry>
           <string>Bits</string>
           <int>3</int>
+        </entry>
+        <entry>
+          <string>intFormat</string>
+          <intFormat>bin</intFormat>
         </entry>
       </elementAttributes>
       <pos x="5160" y="-1080"/>
