@@ -1,0 +1,16 @@
+#
+# Part 3: Testing the ALU
+#
+# This code is used to test the ALU functionality
+#
+
+add $3, $1, $2
+sub $3, $1, $2
+sll $3, $1, $2
+slt $3, $1, $2
+sltu $3, $1, $2
+xor $3, $1, $2
+srl $3, $1, $2
+sra $3, $1, $2
+or $3, $1, $2
+and $3, $1, $2

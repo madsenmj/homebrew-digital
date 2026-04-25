@@ -1,0 +1,10 @@
+#
+# Part 4: Loading the Register File
+#
+# This is an initial test of the register file
+#
+
+lui $1, 1
+lui $2, 2
+lui $3, 4
+lui $4, 8

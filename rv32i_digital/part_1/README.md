@@ -22,5 +22,8 @@ To load the program:
 3. Run the program: `python src/rvi.py -o rom_temp.hex -x ../homebrew-digital/rv32i_digital/part_1/part_1_inst_test.rvi` where the `.rvi` program is the assembly language verison of the program
 4. In the newly created `rom_temp.hex` file, copy the hex code lines
 5. Open the `rom_part1.hex` file in the `rv32i_digital` folder and paste the hex code lines after the `v2.0 raw` line
+6. Right-click on the `Instruction ROM` component in Digital, click on the `Advanced` tab and select the `rom_part1.hex` file to use as the data for the ROM.
+
+## Test Plan
 
 Run the Digital simulation. Verify that the instruction display corresponds to the hex file contents. Verify that incrementing the `PC` by a step size of 4 updates the instruction.
