@@ -1,0 +1,95 @@
+#
+# Part 6: Branching and Jumping
+#
+# This tests branching and jumping functionality
+#
+
+# Multiply two positive numbers
+# tests beq and jal
+_MULT2_:
+    addi $1, $0, 5
+    addi $2, $0, 8
+    addi $5, $0, 0
+LOOP:
+    beq $0, $1, BNE_T
+    add $5, $5, $2
+    addi $1, $1, -1
+    jal $0, LOOP
+BNE_T:
+    # When the PC jumps to 28 <1C>
+    # the state should be:
+    # x01: 0
+    # x02: 8
+    # x05: 40 <28>
+    addi $4, $0, 0
+BNE_T_LOOP:
+    addi $1, $1, 8
+    addi $4, $4, 1
+    bne $1, $5, BNE_T_LOOP
+BLT_T:
+    # At this point the state should be:
+    # PC: <2C>
+    # x01: 40 <28>
+    # x02: 8
+    # x04: 5
+    # x05: 40 <28>
+    addi $4, $0, 0
+BLT_T_LOOP:
+    blt $1, $0, BGE_TEST
+    addi $1, $1, -6
+    addi $4, $4, 1
+    jal $0, BLT_T_LOOP
+BGE_TEST:
+    # When this loop finishes:
+    # PC: <40>
+    # x01: -2 <FFFE>
+    # x04: 7
+    addi $4, $0, 0
+    addi $5, $0, -7
+BGE_TEST_LOOP:
+    bge $5, $1, BLTU_TEST
+    addi $4, $4, 1
+    addi $5, $5, 2
+    jal $0, BGE_TEST_LOOP
+BLTU_TEST:
+    # Finished Loop state:
+    # PC: <58>
+    # x04: 3
+    # x05: -1 <FFFF>
+    addi $4, $0, 0
+    addi $5, $0, -4 #<FFFC>
+BLTU_TEST_LOOP:
+    bltu $5, $2, BGEU_TEST
+    addi $5, $5, 3
+    addi $4, $4, 1
+    jal $0, BLTU_TEST_LOOP
+BGEU_TEST:
+    # Finished Loop state:
+    # PC: <70>
+    # x04: 2
+    # x05: 2
+    addi $4, $0, 0
+    addi $5, $0, -4
+BGEU_TEST_LOOP:
+    bgeu $2, $5, RET
+    addi $5, $5, 3
+    addi $4, $4, 1
+    jal $0, BGEU_TEST_LOOP
+    # Finished Loop state:
+    # PC: <88>
+    # x04: 2
+    # x05: 2
+RET:
+    addi $30, $0, 0
+    jal $31, JUMP_TEST
+    addi $30, $30, 9
+    jal $0, DONE
+JUMP_TEST:
+    addi $30, $30, 9
+    jalr $0, $31, 4
+DONE:
+    jal $0, DONE
+# The program should be stuck in the final counter 
+# with this state:
+# x31: <8C>
+# x30: 9

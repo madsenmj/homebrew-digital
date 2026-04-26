@@ -34,7 +34,7 @@ Workload for loading program into rom:
 * [Part 3: ALU and Core Control](part_3/README.md)
 * [Part 4: Immediate values and Register File](part_4/README.md)
 * [Part 5: Immediate ALU Calculations](part_5/README.md)
-
+* [Part 6: Branch and Jump](part_6/README.md)
 
 ## TODO: 
 

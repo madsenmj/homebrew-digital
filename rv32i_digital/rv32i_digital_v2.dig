@@ -3491,7 +3491,7 @@ from our Instruction array</string>
       <elementAttributes>
         <entry>
           <string>RectHeight</string>
-          <int>34</int>
+          <int>40</int>
         </entry>
         <entry>
           <string>Label</string>
@@ -3502,7 +3502,7 @@ from our Instruction array</string>
           <int>24</int>
         </entry>
       </elementAttributes>
-      <pos x="-1340" y="1180"/>
+      <pos x="-1340" y="1060"/>
     </visualElement>
     <visualElement>
       <elementName>Tunnel</elementName>

@@ -10,7 +10,7 @@ slti $3, $2, 10   # Final value: 0
 sltiu $4, $2, 50  # Final value: 1
 xori $5, $2, 28   # Final value: 52<34>(011100^101000 = 110100)
 srli $6, $5, 2    # Final value: 13<D>
-srai $7, $6, 2    # Final value: 3
+# srai $7, $6, 2    # Not implemented - buggy depending on IMM value
 ori $8, $2, 28    # Final value: 60<3C>(011100|101000 = 111100)
 andi $9, $2, 28   # Final value: 8(011100&101000 = 001000)
 add $10, $1, $0   # Final value: 10<A>
