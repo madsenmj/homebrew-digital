@@ -1,0 +1,35 @@
+#
+# Part 7: Load and Store Functionality
+#
+# This tests memory load and store, plus U type instructions
+#
+
+# lui
+# auipc
+
+# Test store and recall a full word
+WORD:
+    addi $1, $0, 5   # Constant 5
+    addi $2, $0, 16  # memory address 16
+    sw $2, $1, 0     # store 5 in loc 16
+    lw $5, $2, 0    # load loc 16 to reg x05
+# Test store and recall a sign-extended and non SE byte
+BYTE:
+    addi $8, $0, 1023   # Constant <3FF>
+    addi $9, $0, 20  # memory address 20
+    sb $9, $8, 0     # store <FF> in loc 20
+    lb $10, $9, 0    # load to reg x10 - should be FFFFFF
+    lbu $11, $9, 0   # load to reg x11 - should be FF
+# Test store and recall a sign-extended and non SE half
+HALF:
+    addi $16, $0, 1023  # Constant <3FF> 10-1s
+    slli $16, $16, 8    # Constant <3FF00>
+    ori $16, $16, 255    # <3FFFF> final result
+    addi $17, $0, 24  # memory address 24
+    sh $17, $16, 0     # store <FFFF> in loc 24
+    lh $18, $17, 0    # load to reg x18 - should be FFFFFF
+    lhu $19, $17, 0   # load to reg x19 - should be FFFF
+LOAD_PC:
+    auipc $25, 0 # Copy the PC to x25 - should be <40>
+DONE:
+    jal $0, DONE
