@@ -36,18 +36,6 @@ Workload for loading program into rom:
 * [Part 5: Immediate ALU Calculations](part_5/README.md)
 * [Part 6: Branch and Jump](part_6/README.md)
 * [Part 7: Data Memory and LSU](part_7/README.md)
+* [Part 8: Halt and C programming](part_8/README.md)
 
-## TODO: 
 
-* Break this up into sections and explain each section as a tutorial 
-    * Clock
-    * Instruction ROM
-    * Program counter
-    * Control unit
-    * Immediate unit
-    * ALU
-    * CU
-    * Registers
-    * ...
-* Include a README for each section (added, cumulative) and store them in numbered subfolders
-* Include a `.rvi` file and the `.hex` file for each section for testing the new functionality
