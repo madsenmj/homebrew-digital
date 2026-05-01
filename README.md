@@ -15,8 +15,12 @@ Copy the files from the `/Digital/lib` folder into the `/common` folder - the `.
 
 * [Ben Eater's 8-bit Computer from ICs](eater_ic/README.md)
 * [Ben Eater's 8-bit Computer using native Digital components](eater_digital/README.md)
+* [Ben Eater's 8-bit Computer built from relays](eater_relay/README.md)
+* [An implementation of the RISC-V rv32i architecture with an 8-part tutorial](rv32i_digital/README.md)
+* TODO: [A RISC-like 8-bit CPU](risc_like_8bit_digital/README.md)
+* TODO: [A RISC-like 8-bit CPU built with relays](risc_like_8bit_relay/README.md)
+* TODO: [A RISC-V rv32i CPU built out of relays](rv32i_relay/README.md)
 * TODO: [SAP-6502](https://www.youtube.com/playlist?list=PLjQDRjQfW-85S5QkX8wZbkqichM6TLYYt) computer using Digital components
 * TODO: [Ben Eater's 6502 programming tutorial](https://www.youtube.com/playlist?list=PLowKtXNTBypFbtuVMUVXNR0z1mu7dp7eH) implemented using Digital components
-* [Ben Eater's 8-bit Computer built from relays](eater_relay/README.md)
 * TODO: Building an SAP-6502 computer in Digital using relays
 
