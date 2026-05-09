@@ -1,0 +1,26 @@
+#
+# Testing U-type functions
+#
+
+add $3, $1, $2
+sub $3, $1, $2
+mul $3, $1, $2
+sll $3, $1, $2
+xor $3, $1, $2
+srl $3, $1, $2
+or $3, $1, $2
+and $3, $1, $2
+
+addi $3, 1
+subi $3, 16
+muli $3, 32
+slli $3, 64
+xori $3, 127
+srli $3, -127
+ori $3, 33
+andi $3, -65
+
+aipc $7, 14
+
+li $4, -44
+

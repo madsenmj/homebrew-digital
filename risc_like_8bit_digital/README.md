@@ -2,6 +2,53 @@
 
 The goal of this project is to translate the command-based control ideas of the RISC-V architecture into a register-based CPU in preparation for conversion into a relay computer.
 
+## Source Material
+
+I'm leaning heavily on the [Micro8](https://github.com/Inspiaaa/Micro8). This is the starting point for my ISA.
+
+I'm also leaning on this [Assembler](https://github.com/metastableB/RISCV-RV32I-Assembler) which I've modified to work with my 8-bit ISA. 
+
+The assembler instructions are in the [README](assembler/README.md).
+
+## ISA
+
+| F | E | D | C | B | A | 9 | 8 | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 | Type  | Description | Instruction | Operation |
+| ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | :---: | :---: | :---: | :---: | :---: | :----: | :---- | :---- | :---- |
+|  |  |  |  |  |  |  |  |  |  |  | 0 | 0 | 0 | 0 | 0 |  | nop |  |  |
+| imm 4:0 ||||| rs1 |  |  | rd |  |  | 0 | 0 | 1 | 0 | 0 | I | load byte | lb rd, imm(rs1) | rd \= mem\[rs1 \+ imm\] |
+| imm 7:0 |  |  |  |  |  |  |  | rd |  |  | 0 | 1 | 0 | 0 | 0 | U | add imm to PC | aipc rd imm | rd \= imm \+ PC |
+| imm 4:0 |  |  |  |  | rs1 |  |  | rd |  |  | 0 | 1 | 1 | 0 | 0 | I | load unsigned | lbu rd uimm(rs1) | rd \= mem\[rs1 \+ uimm\] |
+|  |  |  |  |  | rs1 |  |  | rd |  |  | 1 | 0 | 0 | 0 | 0 | C | move / copy | mv rd, rs | rd \= rs1 |
+| imm 7:0 |  |  |  |  |  |  |  | rd |  |  | 1 | 0 | 1 | 0 | 0 | U | load immediate | li rd, imm\[8\] | rd \= imm |
+|  |  |  |  |  | rs1 |  |  | rd |  |  | 1 | 1 | 0 | 0 | 0 | C | negate | neg rd rs | rd \= \-rs1 |
+| imm 4:3 |  | rs2 |  |  | rs1 |  |  | imm 2:0 |  |  | 1 | 1 | 1 | 0 | 0 | S | store byte | sb rs2, uimm(rs1) | mem\[rs1 \+ uimm\] \= rs2 |
+|  |  | rs2 |  |  | rs1 |  |  | rd |  |  | 0 | 0 | 0 | 1 | 0 | R | add | add rd rs1 rs2 | rd \= rs1 \+ rs2 |
+|  |  | rs2 |  |  | rs1 |  |  | rd |  |  | 0 | 0 | 1 | 1 | 0 | R | sub | sub rd rs1 rs2 | rd \= rs1 \- rs2 |
+|  |  | rs2 |  |  | rs1 |  |  | rd |  |  | 0 | 1 | 0 | 1 | 0 | R | mulitply | mul rd rs1 rs2 | rd \= rs1 \* rs2 |
+|  |  | rs2 |  |  | rs1 |  |  | rd |  |  | 0 | 1 | 1 | 1 | 0 | R | shift left logical | sll rd rs1 rs2 | rd \= rs1 \<\< rs2\[0:2\] |
+|  |  | rs2 |  |  | rs1 |  |  | rd |  |  | 1 | 0 | 0 | 1 | 0 | R | shift right logical | srl rd rs1 rs2 | rd \= rs1 \>\> rs2\[0:2\] |
+|  |  | rs2 |  |  | rs1 |  |  | rd |  |  | 1 | 0 | 1 | 1 | 0 | R | bitwise and | and rd rs1 rs2 | rd \= rs1 & rs2 |
+|  |  | rs2 |  |  | rs1 |  |  | rd |  |  | 1 | 1 | 0 | 1 | 0 | R | bitwise or | or rd rs1 rs2 | rd \= rs1 | rs2 |
+|  |  | rs2 |  |  | rs1 |  |  | rd |  |  | 1 | 1 | 1 | 1 | 0 | R | bitwise xor | xor rd rs1 rs2 | rd \= rs1 ^ rs2 |
+| imm 7:0 |  |  |  |  |  |  |  | rd |  |  | 0 | 0 | 0 | 0 | 1 | U | add immediate | addi rd imm | rd \+= imm |
+| imm 7:0 |  |  |  |  |  |  |  | rd |  |  | 0 | 0 | 1 | 0 | 1 | U | sub immediate | subi rd imm | rd \-= imm |
+| imm 7:0 |  |  |  |  |  |  |  | rd |  |  | 0 | 1 | 0 | 0 | 1 | U | multiply imm. | muli rd imm | rd \*= imm |
+| imm 7:0 |  |  |  |  |  |  |  | rd |  |  | 0 | 1 | 1 | 0 | 1 | U | shift left logical imm. | slli rd imm | rd \<\<= imm\[0:2\] |
+| imm 7:0 |  |  |  |  |  |  |  | rd |  |  | 1 | 0 | 0 | 0 | 1 | U | shift right logical imm. | srli rd imm | rd \>\>= imm\[0:2\] |
+| imm 7:0 |  |  |  |  |  |  |  | rd |  |  | 1 | 0 | 1 | 0 | 1 | U | bitwise and imm. | andi rd imm | rd &= imm |
+| imm 7:0 |  |  |  |  |  |  |  | rd |  |  | 1 | 1 | 0 | 0 | 1 | U | bitwise or imm. | ori rd imm | rd |= imm |
+| imm 7:0 |  |  |  |  |  |  |  | rd |  |  | 1 | 1 | 1 | 0 | 1 | U | bitwise xor imm. | xori rd imm | rd ^= imm |
+| imm 7:0 |  |  |  |  |  |  |  | rd |  |  | 0 | 0 | 0 | 1 | 1 | U | jump | j uimm\[8\] | pc \= uimm |
+| imm 4:3 |  | rs2 |  |  | rs1 |  |  | imm 2:0 |  |  | 0 | 0 | 1 | 1 | 1 | B | branch on equal | beq rs1 rs2 label | if (rs1 \== rs2) pc \+= imm |
+|  |  |  |  |  |  |  |  | rd |  |  | 0 | 1 | 0 | 1 | 1 | U | jump register | jr rd | pc \= rd |
+| imm 4:3 |  | rs2 |  |  | rs1 |  |  | imm 2:0 |  |  | 0 | 1 | 1 | 1 | 1 | B | branch on not equal | bne rs1 rs2 label | if (rs1 \!= rs2) pc \+= imm |
+| imm 7:0 |  |  |  |  |  |  |  | rd |  |  | 1 | 0 | 0 | 1 | 1 | U | jump and link | jal rd, uimm\[8\] | rd \= pc+1, pc \= uimm |
+| imm 4:3 |  | rs2 |  |  | rs1 |  |  | imm 2:0 |  |  | 1 | 0 | 1 | 1 | 1 | B | branch on less than (unsigned) | bltu rs1 rs2 label | if (rs1 \< rs2) pc \+= imm |
+|  |  |  |  |  | rs1 |  |  | rd |  |  | 1 | 1 | 0 | 1 | 1 | J | jump and link register | jalr rd, rs | rd \= pc+1, pc \= rs |
+| imm 4:3 |  | rs2 |  |  | rs1 |  |  | imm 2:0 |  |  | 1 | 1 | 1 | 1 | 1 | B | branch on greater than or equal (unsigned) | bgeu rs1 rs2 label | if (rs1 \>= rs2) pc \+= imm |
+
+
+
 Target goals:
 
 * No ICs - the input is simulated through a ROM, but could easily be substituted with a paper or tape drive input

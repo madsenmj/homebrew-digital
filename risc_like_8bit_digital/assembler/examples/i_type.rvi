@@ -1,0 +1,7 @@
+#
+# Testing I-type functions
+#
+
+lb $4, $2, 4
+lb $4, $1, 17
+lbu $4, $2, 17
