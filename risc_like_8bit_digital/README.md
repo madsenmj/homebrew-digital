@@ -48,12 +48,23 @@ The assembler instructions are in the [README](assembler/README.md).
 | imm 4:3 |  | rs2 |  |  | rs1 |  |  | imm 2:0 |  |  | 1 | 1 | 1 | 1 | 1 | B | bgeu | branch on greater than or equal (unsigned) | bgeu rs1 rs2 label | if (rs1 \>= rs2) pc \+= imm |
 
 
-
-Target goals:
+## Target goals:
 
 * No ICs - the input is simulated through a ROM, but could easily be substituted with a paper or tape drive input
 * Program Memory is held by 16-bit words stored in registers
 * Registers, Logic, and Control are together in the register array
 * Output via LEDs but could be updated to paper or tape
 
+
+## TODO
+
+* Set up the clock
+* Set up the instruction memory and loader - loading from a ROM in Digital to a second memory bank (simulating loading from an external source)
+* Set up the program counter
+* Start with the ALU and the R-type instructions
+* Add the Register bank
+* Add the immediate types
+* Add branch and jump
+* Add data memory
+* Add IO and finalize CPU
 
