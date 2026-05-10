@@ -12,40 +12,40 @@ The assembler instructions are in the [README](assembler/README.md).
 
 ## ISA
 
-| F | E | D | C | B | A | 9 | 8 | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 | Type  | Description | Instruction | Operation |
-| ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | :---: | :---: | :---: | :---: | :---: | :----: | :---- | :---- | :---- |
-|  |  |  |  |  |  |  |  |  |  |  | 0 | 0 | 0 | 0 | 0 |  | nop |  |  |
-| imm 4:0 ||||| rs1 |  |  | rd |  |  | 0 | 0 | 1 | 0 | 0 | I | load byte | lb rd, imm(rs1) | rd \= mem\[rs1 \+ imm\] |
-| imm 7:0 |  |  |  |  |  |  |  | rd |  |  | 0 | 1 | 0 | 0 | 0 | U | add imm to PC | aipc rd imm | rd \= imm \+ PC |
-| imm 4:0 |  |  |  |  | rs1 |  |  | rd |  |  | 0 | 1 | 1 | 0 | 0 | I | load unsigned | lbu rd uimm(rs1) | rd \= mem\[rs1 \+ uimm\] |
-|  |  |  |  |  | rs1 |  |  | rd |  |  | 1 | 0 | 0 | 0 | 0 | C | move / copy | mv rd, rs | rd \= rs1 |
-| imm 7:0 |  |  |  |  |  |  |  | rd |  |  | 1 | 0 | 1 | 0 | 0 | U | load immediate | li rd, imm\[8\] | rd \= imm |
-|  |  |  |  |  | rs1 |  |  | rd |  |  | 1 | 1 | 0 | 0 | 0 | C | negate | neg rd rs | rd \= \-rs1 |
-| imm 4:3 |  | rs2 |  |  | rs1 |  |  | imm 2:0 |  |  | 1 | 1 | 1 | 0 | 0 | S | store byte | sb rs2, uimm(rs1) | mem\[rs1 \+ uimm\] \= rs2 |
-|  |  | rs2 |  |  | rs1 |  |  | rd |  |  | 0 | 0 | 0 | 1 | 0 | R | add | add rd rs1 rs2 | rd \= rs1 \+ rs2 |
-|  |  | rs2 |  |  | rs1 |  |  | rd |  |  | 0 | 0 | 1 | 1 | 0 | R | sub | sub rd rs1 rs2 | rd \= rs1 \- rs2 |
-|  |  | rs2 |  |  | rs1 |  |  | rd |  |  | 0 | 1 | 0 | 1 | 0 | R | mulitply | mul rd rs1 rs2 | rd \= rs1 \* rs2 |
-|  |  | rs2 |  |  | rs1 |  |  | rd |  |  | 0 | 1 | 1 | 1 | 0 | R | shift left logical | sll rd rs1 rs2 | rd \= rs1 \<\< rs2\[0:2\] |
-|  |  | rs2 |  |  | rs1 |  |  | rd |  |  | 1 | 0 | 0 | 1 | 0 | R | shift right logical | srl rd rs1 rs2 | rd \= rs1 \>\> rs2\[0:2\] |
-|  |  | rs2 |  |  | rs1 |  |  | rd |  |  | 1 | 0 | 1 | 1 | 0 | R | bitwise and | and rd rs1 rs2 | rd \= rs1 & rs2 |
-|  |  | rs2 |  |  | rs1 |  |  | rd |  |  | 1 | 1 | 0 | 1 | 0 | R | bitwise or | or rd rs1 rs2 | rd \= rs1 | rs2 |
-|  |  | rs2 |  |  | rs1 |  |  | rd |  |  | 1 | 1 | 1 | 1 | 0 | R | bitwise xor | xor rd rs1 rs2 | rd \= rs1 ^ rs2 |
-| imm 7:0 |  |  |  |  |  |  |  | rd |  |  | 0 | 0 | 0 | 0 | 1 | U | add immediate | addi rd imm | rd \+= imm |
-| imm 7:0 |  |  |  |  |  |  |  | rd |  |  | 0 | 0 | 1 | 0 | 1 | U | sub immediate | subi rd imm | rd \-= imm |
-| imm 7:0 |  |  |  |  |  |  |  | rd |  |  | 0 | 1 | 0 | 0 | 1 | U | multiply imm. | muli rd imm | rd \*= imm |
-| imm 7:0 |  |  |  |  |  |  |  | rd |  |  | 0 | 1 | 1 | 0 | 1 | U | shift left logical imm. | slli rd imm | rd \<\<= imm\[0:2\] |
-| imm 7:0 |  |  |  |  |  |  |  | rd |  |  | 1 | 0 | 0 | 0 | 1 | U | shift right logical imm. | srli rd imm | rd \>\>= imm\[0:2\] |
-| imm 7:0 |  |  |  |  |  |  |  | rd |  |  | 1 | 0 | 1 | 0 | 1 | U | bitwise and imm. | andi rd imm | rd &= imm |
-| imm 7:0 |  |  |  |  |  |  |  | rd |  |  | 1 | 1 | 0 | 0 | 1 | U | bitwise or imm. | ori rd imm | rd |= imm |
-| imm 7:0 |  |  |  |  |  |  |  | rd |  |  | 1 | 1 | 1 | 0 | 1 | U | bitwise xor imm. | xori rd imm | rd ^= imm |
-| imm 7:0 |  |  |  |  |  |  |  | rd |  |  | 0 | 0 | 0 | 1 | 1 | U | jump | j uimm\[8\] | pc \= uimm |
-| imm 4:3 |  | rs2 |  |  | rs1 |  |  | imm 2:0 |  |  | 0 | 0 | 1 | 1 | 1 | B | branch on equal | beq rs1 rs2 label | if (rs1 \== rs2) pc \+= imm |
-|  |  |  |  |  |  |  |  | rd |  |  | 0 | 1 | 0 | 1 | 1 | U | jump register | jr rd | pc \= rd |
-| imm 4:3 |  | rs2 |  |  | rs1 |  |  | imm 2:0 |  |  | 0 | 1 | 1 | 1 | 1 | B | branch on not equal | bne rs1 rs2 label | if (rs1 \!= rs2) pc \+= imm |
-| imm 7:0 |  |  |  |  |  |  |  | rd |  |  | 1 | 0 | 0 | 1 | 1 | U | jump and link | jal rd, uimm\[8\] | rd \= pc+1, pc \= uimm |
-| imm 4:3 |  | rs2 |  |  | rs1 |  |  | imm 2:0 |  |  | 1 | 0 | 1 | 1 | 1 | B | branch on less than (unsigned) | bltu rs1 rs2 label | if (rs1 \< rs2) pc \+= imm |
-|  |  |  |  |  | rs1 |  |  | rd |  |  | 1 | 1 | 0 | 1 | 1 | J | jump and link register | jalr rd, rs | rd \= pc+1, pc \= rs |
-| imm 4:3 |  | rs2 |  |  | rs1 |  |  | imm 2:0 |  |  | 1 | 1 | 1 | 1 | 1 | B | branch on greater than or equal (unsigned) | bgeu rs1 rs2 label | if (rs1 \>= rs2) pc \+= imm |
+| F | E | D | C | B | A | 9 | 8 | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 | Type | OP | Description | Usage | Calculation |
+| ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | :---: | :---: | :---: | :---: | :---: | :---- | :---- | :---- | :---- | :---- |
+|  |  |  |  |  |  |  |  |  |  |  | 0 | 0 | 0 | 0 | 0 | N | nop | nop |  |  |
+| imm 4:0 |  |  |  |  | rs1 |  |  | rd |  |  | 0 | 0 | 1 | 0 | 0 | I | lb | load byte | lb rd, imm(rs1) | rd \= mem\[rs1 \+ imm\] |
+| imm 7:0 |  |  |  |  |  |  |  | rd |  |  | 0 | 1 | 0 | 0 | 0 | U\_S | aipc | add imm to PC | aipc rd imm | rd \= imm \+ PC |
+| imm 4:0 |  |  |  |  | rs1 |  |  | rd |  |  | 0 | 1 | 1 | 0 | 0 | I | lbu | load unsigned | lbu rd uimm(rs1) | rd \= mem\[rs1 \+ uimm\] |
+|  |  |  |  |  | rs1 |  |  | rd |  |  | 1 | 0 | 0 | 0 | 0 | C | mv | move / copy | mv rd, rs | rd \= rs1 |
+| imm 7:0 |  |  |  |  |  |  |  | rd |  |  | 1 | 0 | 1 | 0 | 0 | U\_S | li | load immediate | li rd, imm\[8\] | rd \= imm |
+|  |  |  |  |  | rs1 |  |  | rd |  |  | 1 | 1 | 0 | 0 | 0 | C | neg | negate | neg rd rs | rd \= \-rs1 |
+| imm 4:3 |  | rs2 |  |  | rs1 |  |  | imm 2:0 |  |  | 1 | 1 | 1 | 0 | 0 | S | sb | store byte | sb rs2, uimm(rs1) | mem\[rs1 \+ uimm\] \= rs2 |
+|  |  | rs2 |  |  | rs1 |  |  | rd |  |  | 0 | 0 | 0 | 1 | 0 | R | add | add | add rd rs1 rs2 | rd \= rs1 \+ rs2 |
+|  |  | rs2 |  |  | rs1 |  |  | rd |  |  | 0 | 0 | 1 | 1 | 0 | R | sub | sub | sub rd rs1 rs2 | rd \= rs1 \- rs2 |
+|  |  | rs2 |  |  | rs1 |  |  | rd |  |  | 0 | 1 | 0 | 1 | 0 | R | mul | mulitply | mul rd rs1 rs2 | rd \= rs1 \* rs2 |
+|  |  | rs2 |  |  | rs1 |  |  | rd |  |  | 0 | 1 | 1 | 1 | 0 | R | sll | shift left logical | sll rd rs1 rs2 | rd \= rs1 \<\< rs2\[0:2\] |
+|  |  | rs2 |  |  | rs1 |  |  | rd |  |  | 1 | 0 | 0 | 1 | 0 | R | srl | shift right logical | srl rd rs1 rs2 | rd \= rs1 \>\> rs2\[0:2\] |
+|  |  | rs2 |  |  | rs1 |  |  | rd |  |  | 1 | 0 | 1 | 1 | 0 | R | and | bitwise and | and rd rs1 rs2 | rd \= rs1 & rs2 |
+|  |  | rs2 |  |  | rs1 |  |  | rd |  |  | 1 | 1 | 0 | 1 | 0 | R | or | bitwise or | or rd rs1 rs2 | rd \= rs1 | rs2 |
+|  |  | rs2 |  |  | rs1 |  |  | rd |  |  | 1 | 1 | 1 | 1 | 0 | R | xor | bitwise xor | xor rd rs1 rs2 | rd \= rs1 ^ rs2 |
+| imm 7:0 |  |  |  |  |  |  |  | rd |  |  | 0 | 0 | 0 | 0 | 1 | U | addi | add immediate | addi rd imm | rd \+= imm |
+| imm 7:0 |  |  |  |  |  |  |  | rd |  |  | 0 | 0 | 1 | 0 | 1 | U | subi | sub immediate | subi rd imm | rd \-= imm |
+| imm 7:0 |  |  |  |  |  |  |  | rd |  |  | 0 | 1 | 0 | 0 | 1 | U | muli | multiply imm. | muli rd imm | rd \*= imm |
+| imm 7:0 |  |  |  |  |  |  |  | rd |  |  | 0 | 1 | 1 | 0 | 1 | U | slli | shift left logical imm. | slli rd imm | rd \<\<= imm\[0:2\] |
+| imm 7:0 |  |  |  |  |  |  |  | rd |  |  | 1 | 0 | 0 | 0 | 1 | U | srli | shift right logical imm. | srli rd imm | rd \>\>= imm\[0:2\] |
+| imm 7:0 |  |  |  |  |  |  |  | rd |  |  | 1 | 0 | 1 | 0 | 1 | U | andi | bitwise and imm. | andi rd imm | rd &= imm |
+| imm 7:0 |  |  |  |  |  |  |  | rd |  |  | 1 | 1 | 0 | 0 | 1 | U | ori | bitwise or imm. | ori rd imm | rd |= imm |
+| imm 7:0 |  |  |  |  |  |  |  | rd |  |  | 1 | 1 | 1 | 0 | 1 | U | xori | bitwise xor imm. | xori rd imm | rd ^= imm |
+| imm 7:0 |  |  |  |  |  |  |  |  |  |  | 0 | 0 | 0 | 1 | 1 | J1 | j | jump | j label | pc \= uimm |
+| imm 4:3 |  | rs2 |  |  | rs1 |  |  | imm 2:0 |  |  | 0 | 0 | 1 | 1 | 1 | B | beq | branch on equal | beq rs1 rs2 label | if (rs1 \== rs2) pc \+= imm |
+|  |  |  |  |  |  |  |  | rd |  |  | 0 | 1 | 0 | 1 | 1 | J2 | jr | jump register | jr rd | pc \= rd |
+| imm 4:3 |  | rs2 |  |  | rs1 |  |  | imm 2:0 |  |  | 0 | 1 | 1 | 1 | 1 | B | bne | branch on not equal | bne rs1 rs2 label | if (rs1 \!= rs2) pc \+= imm |
+| imm 7:0 |  |  |  |  |  |  |  | rd |  |  | 1 | 0 | 0 | 1 | 1 | U\_J | jal | jump and link | jal rd, label | rd \= pc+1, pc \= uimm |
+| imm 4:3 |  | rs2 |  |  | rs1 |  |  | imm 2:0 |  |  | 1 | 0 | 1 | 1 | 1 | B | bltu | branch on less than (unsigned) | bltu rs1 rs2 label | if (rs1 \< rs2) pc \+= imm |
+| imm 4:0 |  |  |  |  | rs1 |  |  | rd |  |  | 1 | 1 | 0 | 1 | 1 | J3 | jalr | jump and link register | jalr rd, rs, imm | rd \= pc+1, pc \= rs1 \+ SignExt(imm) |
+| imm 4:3 |  | rs2 |  |  | rs1 |  |  | imm 2:0 |  |  | 1 | 1 | 1 | 1 | 1 | B | bgeu | branch on greater than or equal (unsigned) | bgeu rs1 rs2 label | if (rs1 \>= rs2) pc \+= imm |
 
 
 

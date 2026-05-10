@@ -97,16 +97,17 @@ class MachineCodeGenerator:
 
     def op_jal(self, tokens):
         '''
-        imm[20] imm[10:1] imm[11] imm[19:12] rd opcode
-        immediate is already shuffled in tokens
+        imm[7:0] rd  funct3  opcode
         '''
+        opcode = tokens['opcode']
         bin_opcode = None
         bin_rd = None
         rd = None
         imm = None
 
         try:
-            bin_opcode = self.CONST.BOP_JAL
+            funct3 = self.CONST.FUNCT3_JPBR[opcode]
+            bin_opcode = self.CONST.BOP_JPBR
             rd = tokens['rd']
             bin_rd = self.get_bin_register(rd)
             imm = tokens['imm']
@@ -115,56 +116,51 @@ class MachineCodeGenerator:
                            "tokens in " + str(tokens['lineno']))
             exit()
 
-        bin_str = imm + bin_rd + bin_opcode
-        assert(len(bin_str) == 32)
+        bin_str = imm + bin_rd + funct3 + bin_opcode
+        assert(len(bin_str) == 16)
 
         tok_dict = {
             'opcode': bin_opcode,
+            'funct3': funct3,
             'rd': bin_rd,
             'imm': imm
         }
         return bin_str, tok_dict
 
     def op_jalr(self, tokens):
-        opcode = tokens['opcode']
         '''
-        imm[11:0] rs1 funct3 rd opcode
+        imm[4:0] rs1 rd funct3 opcode
         '''
         opcode = tokens['opcode']
         bin_opcode = None
         funct = None
         rs1 = None
         bin_rs1 = None
-        bin_rd = None
-        rd = None
+        bin_rs2 = None
+        rs2 = None
         imm = None
 
         try:
-            funct = self.CONST.FUNCT3_JALR[opcode]
-            bin_opcode = self.CONST.BOP_JALR
+            funct = self.CONST.FUNCT3_JPBR[opcode]
+            bin_opcode = self.CONST.BOP_JPBR
             rs1 = tokens['rs1']
             bin_rs1 = self.get_bin_register(rs1)
-            rd = tokens['rd']
-            bin_rd = self.get_bin_register(rd)
+            rs2 = tokens['rs2']
+            bin_rs2 = self.get_bin_register(rs2)
             imm = tokens['imm']
         except:
-            cp.cprint_fail("Internal Error: JALR: could not parse" +
+            cp.cprint_fail("Internal Error: JALR: could not parse " +
                            "tokens in " + str(tokens['lineno']))
             exit()
 
-        bin_str = imm + bin_rs1 + funct + bin_rd + bin_opcode
-        assert(len(bin_str) == 32)
-
-        if imm[-2:] != '00':
-            cp.cprint_warn_32("32_Warning:" + str(tokens['lineno']) +
-                              ": Missaligned address." +
-                              " Address should be 4 bytes aligned.")
+        bin_str = imm + bin_rs2 + bin_rs1 + funct + bin_opcode
+        assert(len(bin_str) == 16)
 
         tok_dict = {
             'opcode': bin_opcode,
             'funct': funct,
             'rs1': bin_rs1,
-            'rd': bin_rd,
+            'rs2': bin_rs2,
             'imm': imm
         }
         return bin_str, tok_dict
@@ -207,6 +203,62 @@ class MachineCodeGenerator:
             'imm_2_0': imm_2_0
         }
 
+        return bin_str, tok_dict
+
+    def op_jump(self, tokens):
+        '''
+        imm[7:0] 000 funct3 opcode
+        '''
+        opcode = tokens['opcode']
+        imm = None
+        funct3 = None
+        try:
+            funct3 = self.CONST.FUNCT3_JPBR[opcode]
+            bin_opcode = self.CONST.BOP_JPBR
+            imm = tokens['imm']
+        except:
+            cp.cprint_fail("Internal Error: BRANCH: could not parse" +
+                           " tokens in " + str(tokens['lineno']))
+            exit()
+
+        bin_str = imm + '000' + funct3 + bin_opcode
+        assert(len(bin_str) == 16)
+        tok_dict = {
+            'opcode': bin_opcode,
+            'funct': funct3,
+            'imm': imm
+        }
+
+        return bin_str, tok_dict
+
+    def op_jump_reg(self, tokens):
+        '''
+        NA[7:0] rd funct3 opcode
+        '''
+        opcode = tokens['opcode']
+        bin_opcode = None
+        funct3 = None
+        rd = None
+        bin_rd = None
+
+        try:
+            funct3 = self.CONST.FUNCT3_JPBR[opcode]
+            bin_opcode = self.CONST.BOP_JPBR
+            rd = tokens['rd']
+            bin_rd = self.get_bin_register(rd)
+        except:
+            cp.cprint_fail("Internal Error: SYSTEM_C: could not parse" +
+                           "tokens in " + str(tokens['lineno']))
+            exit()
+
+        bin_str = '00000000' + bin_rd + funct3 + bin_opcode
+        assert(len(bin_str) == 16)
+
+        tok_dict = {
+            'opcode': bin_opcode,
+            'funct3': funct3,
+            'rd': bin_rd
+        }
         return bin_str, tok_dict
 
     def op_load(self, tokens):
@@ -522,6 +574,8 @@ class MachineCodeGenerator:
             'rd': bin_rd
         }
         return bin_str, tok_dict
+
+
     def convert_to_binary(self, tokens):
         '''
         The driver function for converting tokens to machine code.
@@ -552,6 +606,14 @@ class MachineCodeGenerator:
             return self.op_system_c(tokens)
         elif opcode in self.CONST.INSTR_TYPE_B:
             return self.op_branch(tokens)
+        elif opcode in self.CONST.INSTR_TYPE_J1:
+            return self.op_jump(tokens)
+        elif opcode in self.CONST.INSTR_TYPE_J2:
+            return self.op_jump_reg(tokens)
+        elif opcode in self.CONST.INSTR_TYPE_UJ:
+            return self.op_jal(tokens)
+        elif opcode in self.CONST.INSTR_TYPE_J3:
+            return self.op_jalr(tokens)
         else:
             cp.cprint_fail("Error:" + str(tokens['lineno']) +
                            ": Opcode: '%s' not implemented" % opcode)

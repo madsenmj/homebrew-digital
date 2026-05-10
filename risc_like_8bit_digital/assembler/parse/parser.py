@@ -25,6 +25,10 @@ statement: OPCODE register COMMA register COMMA register NEWLINE
         | OPCODE register COMMA register COMMA IMM_I NEWLINE
         | OPCODE register COMMA IMM_I NEWLINE
         | OPCODE register COMMA register NEWLINE
+        | OPCODE register COMMA register COMMA LABEL NEWLINE
+        | OPCODE LABEL NEWLINE
+        | OPCODE register NEWLINE
+        | OPCODE register COMMA LABEL NEWLINE
         | NEWLINE
 
 NOTE: We parse the porgram line by line Hence we don't
@@ -80,9 +84,9 @@ def p_statement_C(p):
     }
 
 
-def p_statement_I_S(p):
+def p_statement_I_S_JALR(p):
     'statement : OPCODE register COMMA register COMMA IMMEDIATE NEWLINE'
-    if (p[1] not in mcc.INSTR_TYPE_I) and (p[1] not in mcc.INSTR_TYPE_S):
+    if (p[1] not in mcc.INSTR_TYPE_I) and (p[1] not in mcc.INSTR_TYPE_S) and (p[1] not in mcc.INSTR_TYPE_J3):
         cp.cprint_fail("Error:" + str(p.lineno(1)) +
                        ": Incorrect opcode or arguments")
         raise SyntaxError
@@ -111,8 +115,8 @@ def p_statement_I_S(p):
             'imm': imm,
             'lineno': p.lineno(1)
         }
-    else:  # SB (BRANCH)
-        ret, imm, msg = get_imm_SB(p[6], p.lineno(6))
+    else:  # JALR
+        ret, imm, msg = get_imm_I(p[6], p.lineno(6))
         if not ret:
             cp.cprint_fail("Error:" + str(p.lineno(1)) + ":" + msg)
             raise SyntaxError
@@ -176,6 +180,29 @@ def p_statement_B(p):
         'lineno': p.lineno(1)
     }
 
+def p_statement_J1(p):
+    'statement : OPCODE LABEL NEWLINE'
+    if p[1] not in mcc.INSTR_TYPE_J1:
+        cp.cprint_fail("Error:" + str(p.lineno(1)) +
+                       ": Incorrect opcode or arguments")
+        raise SyntaxError
+    p[0] = {
+        'opcode': p[1],
+        'label': p[2],
+        'lineno': p.lineno(1)
+    }
+
+def p_statement_J2(p):
+    'statement : OPCODE register NEWLINE'
+    if p[1] not in mcc.INSTR_TYPE_J2:
+        cp.cprint_fail("Error:" + str(p.lineno(1)) +
+                       ": Incorrect opcode or arguments")
+        raise SyntaxError
+    p[0] = {
+        'opcode': p[1],
+        'rd': p[2],
+        'lineno': p.lineno(1)
+    }
 
 def p_register(p):
     'register : REGISTER'
@@ -350,7 +377,7 @@ def encode_offset(ltokens, address, target):
     offset = target - address
     lineno = ltokens['lineno']
     if ltokens['opcode'] == mcc.INSTR_JAL:
-        ret, imm, msg = get_imm_UJ(offset, lineno)
+        ret, imm, msg = get_imm_U(offset, lineno)
         if not ret:
             # Label translation should not raise errors,
             # Warnings make sense.
@@ -363,7 +390,16 @@ def encode_offset(ltokens, address, target):
             'imm': imm,
             'lineno': lineno
         }
-
+    elif ltokens['opcode'] in mcc.INSTR_TYPE_J1:
+        ret, imm, msg = get_imm_U(offset, lineno)
+        if not ret:
+            cp.cprint_fail("Internal error:" + str(lineno) + ":" + msg)
+            exit(1)
+        result = {
+            'opcode': ltokens['opcode'],
+            'imm': imm,
+            'lineno': lineno
+        }
     elif ltokens['opcode'] in mcc.INSTR_TYPE_B:
         ret, imm, msg = get_imm_SB(offset, lineno)
         if not ret:
@@ -373,19 +409,6 @@ def encode_offset(ltokens, address, target):
             'opcode': ltokens['opcode'],
             'rs1': ltokens['rs1'],
             'rs2': ltokens['rs2'],
-            'imm': imm,
-            'lineno': lineno
-        }
-    elif ltokens['opcode'] == mcc.INSTR_JALR:
-        ret, imm, msg = get_imm_I(offset, lineno)
-        if not ret:
-            cp.cprint_fail("Error:" + str(lineno) + ":" + msg)
-            raise SyntaxError
-
-        result = {
-            'opcode': ltokens['opcode'],
-            'rd': ltokens['rd'],
-            'rs1': ltokens['rs1'],
             'imm': imm,
             'lineno': lineno
         }
@@ -414,9 +437,7 @@ def parse_pass_one(fin, args):
     cp.warn = False
     cp.warn8 = False
     for line in fin:
-        print(line)
         result = parser.parse(line)
-        print(result)
         if result["tokens"] is None:
             continue
 
@@ -446,9 +467,7 @@ def parse_pass_two(fin, fout, symbols_table, args):
     reset_lineno()
     address = 0
     for line in fin:
-        print(line)
         result = parser.parse(line)
-        print(result)
         if result["tokens"] is None:
             continue
 

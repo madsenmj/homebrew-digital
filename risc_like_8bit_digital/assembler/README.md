@@ -7,3 +7,8 @@ Workload for loading program into rom:
 3. Run the program: `python rvi.py -o rom.hex -x ..\examples\nth_fibonacci_number.rvi` where the `.rvi` program is the assembly language verison of the program
 4. In the newly created `rom.hex` file, copy the hex code lines
 5. Open the `rom.hex` file in the `rv32i_digital` folder and paste the hex code lines after the `v2.0 raw` line
+
+
+## Development notes
+
+When updating/adding a new assembler type in the parser.py file (one of the `p_statement_` types), delete the `parsetab.py` file. When it runs again, it will automatically generate the file and update the parser.
