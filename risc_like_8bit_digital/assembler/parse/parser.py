@@ -24,6 +24,7 @@ program: statement
 statement: OPCODE register COMMA register COMMA register NEWLINE
         | OPCODE register COMMA register COMMA IMM_I NEWLINE
         | OPCODE register COMMA IMM_I NEWLINE
+        | OPCODE register COMMA register NEWLINE
         | NEWLINE
 
 NOTE: We parse the porgram line by line Hence we don't
@@ -65,6 +66,19 @@ def p_statement_R(p):
         'lineno': p.lineno(1)
     }
 
+def p_statement_C(p):
+    'statement : OPCODE register COMMA register NEWLINE'
+    if p[1] not in mcc.INSTR_TYPE_C:
+        cp.cprint_fail("Error:" + str(p.lineno(1)) +
+                       ": Incorrect opcode or arguments")
+        raise SyntaxError
+    p[0] = {
+        'opcode': p[1],
+        'rd': p[2],
+        'rs1': p[4],
+        'lineno': p.lineno(1)
+    }
+
 
 def p_statement_I_S(p):
     'statement : OPCODE register COMMA register COMMA IMMEDIATE NEWLINE'
@@ -86,7 +100,7 @@ def p_statement_I_S(p):
             'lineno': p.lineno(1)
         }
     elif p[1] in mcc.INSTR_TYPE_S:
-        ret, imm, msg = get_imm_S(p[6], p.lineno(6))
+        ret, imm, msg = get_imm_SB(p[6], p.lineno(6))
         if not ret:
             cp.cprint_fail("Error:" + str(p.lineno(1)) + ":" + msg)
             raise SyntaxError
@@ -147,29 +161,20 @@ def p_statement_UJ_LABEL(p):
         }
 
 
-def p_statement_SB__JALR_LABEL(p):
+def p_statement_B(p):
     'statement : OPCODE register COMMA register COMMA LABEL NEWLINE'
-    # Branch and JALR
-    if (p[1] not in mcc.INSTR_TYPE_SB) and (p[1] != mcc.INSTR_JALR):
+    # Branch
+    if p[1] not in mcc.INSTR_TYPE_B:
         cp.cprint_fail("Error:" + str(p.lineno(1)) +
                        ": Incorrect opcode or arguments")
         raise SyntaxError
-    if p[1] in mcc.INSTR_TYPE_SB:
-        p[0] = {
-            'opcode': p[1],
-            'rs1': p[2],
-            'rs2': p[4],
-            'label': p[6],
-            'lineno': p.lineno(1)
-        }
-    elif p[1] == mcc.INSTR_JALR:
-        p[0] = {
-            'opcode': p[1],
-            'rd': p[2],
-            'rs1': p[4],
-            'label': p[6],
-            'lineno': p.lineno(1)
-        }
+    p[0] = {
+        'opcode': p[1],
+        'rs1': p[2],
+        'rs2': p[4],
+        'label': p[6],
+        'lineno': p.lineno(1)
+    }
 
 
 def p_register(p):
@@ -281,16 +286,16 @@ def get_imm_UJ(imm10, lineno):
     return True, shf_imm, None
 
 
-def get_imm_S(imm5, lineno):
+def get_imm_SB(imm5, lineno):
     try:
         imm5 = int(imm5)
     except:
         msg = "Invalid immediate specified."
         return False, imm5, msg
     '''
-    The S type encodes instructions SB.
+    The S type and B type encodes instructions SB.
 
-    Also, in S type, the immediate is split into two parts - one part
+    The immediate is split into two parts - one part
     holding bits [15:16] in the immediate ordering(MSB-LSB from left to right)
     and the other part holding bits [5:6].
     We split the immediate into two portions hence.
@@ -312,40 +317,6 @@ def get_imm_S(imm5, lineno):
     assert(len(imm_15_16) + len(imm_2_0) == 5)
     return True, (imm_15_16, imm_2_0), p_statement_none
 
-
-def get_imm_SB(imm10, lineno):
-    try:
-        imm10 = int(imm10)
-    except:
-        msg = "Invalid immediate specified."
-        return False, imm10, msg
-    '''
-    The SB type encodes instructions BEQ, BNE, BLT, BLTU, BGE, BGEU.
-    The 12 bit immediate is encodes a signed offset in multiples of two.
-    Hence the last bit will be 0 and we ignore this in the encoding
-    effectively allowing encoding up to 13 bits.
-    '''
-    # 13 bit encoding
-    IMM_MAX = 0b0111111111110
-    IMM_MIN = -0b1000000000000
-
-    if (imm10 > IMM_MAX) or (imm10 < IMM_MIN):
-        cp.cprint_warn("Warning:" + str(lineno) + ":" +
-                       "Immediate is too big, will overflow.")
-    # Convert to 2's complement binary
-    imm2 = format(imm10 if imm10 >= 0 else (1 << 13) + imm10, '013b')
-    if imm2[-1] != '0':
-        cp.cprint_warn("Warning:" + str(lineno) + ":" +
-                       "Immediate not 2 bytes aligned. Last bit will" +
-                       "be dropped.")
-    imm2 = imm2[0:12]
-    # Convert immediate back to base 10 from base 2
-    # p[0] = int(imm2, 2)
-    assert(len(imm2) == 12)
-    imm_12_10_5 = imm2[-12] + imm2[-10:-4]
-    imm_4_1_11 = imm2[-4:] + imm2[-11]
-    assert(len(imm_12_10_5) + len(imm_4_1_11) == 12)
-    return True, (imm_12_10_5, imm_4_1_11), None
 
 '''
 For this simple parser, I have not implemented error
@@ -375,9 +346,8 @@ def encode_offset(ltokens, address, target):
 
     returns: immediate offset in binary
     '''
-    # Offset address, should be divisible by 2 (2-byte aligned)
+    # Offset address
     offset = target - address
-    assert(offset % 2 == 0)
     lineno = ltokens['lineno']
     if ltokens['opcode'] == mcc.INSTR_JAL:
         ret, imm, msg = get_imm_UJ(offset, lineno)
@@ -394,7 +364,7 @@ def encode_offset(ltokens, address, target):
             'lineno': lineno
         }
 
-    elif ltokens['opcode'] in mcc.INSTR_TYPE_SB:
+    elif ltokens['opcode'] in mcc.INSTR_TYPE_B:
         ret, imm, msg = get_imm_SB(offset, lineno)
         if not ret:
             cp.cprint_fail("Internal error:" + str(lineno) + ":" + msg)

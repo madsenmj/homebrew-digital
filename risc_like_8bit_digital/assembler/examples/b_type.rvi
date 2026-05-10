@@ -1,0 +1,13 @@
+#
+# Testing B-type functions
+#
+
+DONE:
+  mv $4, $2
+  beq $5, $1, DONE
+  bne $4, $0, DONE
+  bltu $3, $2, DONE
+  bgeu $5, $1, MORE
+MORE:
+  neg $4, $2
+

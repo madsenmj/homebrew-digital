@@ -1,0 +1,6 @@
+#
+# Testing C-type functions
+#
+
+mv $4, $2
+neg $4, $4

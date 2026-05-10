@@ -195,8 +195,8 @@ class MachineCodeGenerator:
                            " tokens in " + str(tokens['lineno']))
             exit()
 
-        bin_str = imm_4_3 + bin_rs2 + bin_rs1 + funct3
-        bin_str += imm_2_0 + bin_opcode
+        bin_str = imm_4_3 + bin_rs2 + bin_rs1 + imm_2_0 
+        bin_str += funct3 + bin_opcode
         assert(len(bin_str) == 16)
         tok_dict = {
             'opcode': bin_opcode,
@@ -488,6 +488,40 @@ class MachineCodeGenerator:
         }
         return bin_str, tok_dict
 
+    def op_system_c(self, tokens):
+        '''
+        NA[4:0]  rs1  rd funct3 opcode
+        '''
+        opcode = tokens['opcode']
+        bin_opcode = None
+        funct3 = None
+        rs1 = None
+        rd = None
+        bin_rs1 = None
+        bin_rd = None
+
+        try:
+            funct3 = self.CONST.FUNCT3_SYSTEM[opcode]
+            bin_opcode = self.CONST.BOP_SYSTEM
+            rs1 = tokens['rs1']
+            rd = tokens['rd']
+            bin_rs1 = self.get_bin_register(rs1)
+            bin_rd = self.get_bin_register(rd)
+        except:
+            cp.cprint_fail("Internal Error: SYSTEM_C: could not parse" +
+                           "tokens in " + str(tokens['lineno']))
+            exit()
+
+        bin_str = '00000' + bin_rs1 + bin_rd + funct3 + bin_opcode
+        assert(len(bin_str) == 16)
+
+        tok_dict = {
+            'opcode': bin_opcode,
+            'funct3': funct3,
+            'rs1': bin_rs1,
+            'rd': bin_rd
+        }
+        return bin_str, tok_dict
     def convert_to_binary(self, tokens):
         '''
         The driver function for converting tokens to machine code.
@@ -514,6 +548,10 @@ class MachineCodeGenerator:
             return self.op_system_i(tokens)
         elif opcode in self.CONST.INSTR_TYPE_S:
             return self.op_system_s(tokens)
+        elif opcode in self.CONST.INSTR_TYPE_C:
+            return self.op_system_c(tokens)
+        elif opcode in self.CONST.INSTR_TYPE_B:
+            return self.op_branch(tokens)
         else:
             cp.cprint_fail("Error:" + str(tokens['lineno']) +
                            ": Opcode: '%s' not implemented" % opcode)
