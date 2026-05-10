@@ -66,13 +66,13 @@ def p_statement_R(p):
     }
 
 
-def p_statement_I_S_SB(p):
+def p_statement_I_S(p):
     'statement : OPCODE register COMMA register COMMA IMMEDIATE NEWLINE'
-    if (p[1] not in mcc.INSTR_BOP_SYSTEM_I) and (p[1] not in mcc.INSTR_BOP_SYSTEM_S):
+    if (p[1] not in mcc.INSTR_TYPE_I) and (p[1] not in mcc.INSTR_TYPE_S):
         cp.cprint_fail("Error:" + str(p.lineno(1)) +
                        ": Incorrect opcode or arguments")
         raise SyntaxError
-    elif p[1] in mcc.INSTR_BOP_SYSTEM_I:
+    elif p[1] in mcc.INSTR_TYPE_I:
         ret, imm, msg = get_imm_I(p[6], p.lineno(6))
         if not ret:
             cp.cprint_fail("Error:" + str(p.lineno(6)) + ":" + msg)
@@ -85,7 +85,6 @@ def p_statement_I_S_SB(p):
             'imm': imm,
             'lineno': p.lineno(1)
         }
-        # TODO: Start here to get System I type working
     elif p[1] in mcc.INSTR_TYPE_S:
         ret, imm, msg = get_imm_S(p[6], p.lineno(6))
         if not ret:
@@ -115,7 +114,7 @@ def p_statement_I_S_SB(p):
 def p_statement_U(p):
     'statement : OPCODE register COMMA IMMEDIATE NEWLINE'
 
-    if p[1] not in mcc.INSTR_TYPE_U:
+    if (p[1] not in mcc.INSTR_TYPE_U) and (p[1] not in mcc.INSTR_TYPE_US):
         cp.cprint_fail("Error:" + str(p.lineno(1)) +
                        ": Incorrect opcode or arguments")
         raise SyntaxError
@@ -206,11 +205,11 @@ def get_imm_I(imm5, lineno):
         cp.cprint_warn("Warning:" + str(lineno) + ":" +
                        "Immediate is too big, will overflow.")
     # Conver to 2's complement binary
-    imm2 = format(imm5 if imm5 >= 0 else (1 << 5) + imm5, '08b')
-    imm2 = imm2[-8:]
+    imm2 = format(imm5 if imm5 >= 0 else (1 << 5) + imm5, '05b')
+    imm2 = imm2[-5:]
     # Convert immediate back to base 10 from base 2
     # p[0] = int(imm2, 2)
-    assert(len(imm2) == 8)
+    assert(len(imm2) == 5)
     return True, imm2, p_statement_none
 
 
@@ -282,47 +281,36 @@ def get_imm_UJ(imm10, lineno):
     return True, shf_imm, None
 
 
-def get_imm_S(imm10, lineno):
+def get_imm_S(imm5, lineno):
     try:
-        imm10 = int(imm10)
+        imm5 = int(imm5)
     except:
         msg = "Invalid immediate specified."
-        return False, imm10, msg
+        return False, imm5, msg
     '''
-    The S type encodes instructions SW, SB and SH.
-    Similar to loads, SW, SB and SH the address offset is a signed 12 bit
-    number. Since the ISA allows misaligned stores, we need not check
-    for alignment. Again, the CPU generates a misaligned instruction
-    exception if required.
-
-    Since I am generating a assembler for a 32 bit architecture, a warning
-    is generated for misaligned stores in the binary generation phase.
+    The S type encodes instructions SB.
 
     Also, in S type, the immediate is split into two parts - one part
-    holding bits [11:5] in the immediate ordering(MSB-LSB from left to right)
-    and the other part holding bits [4:0].
+    holding bits [15:16] in the immediate ordering(MSB-LSB from left to right)
+    and the other part holding bits [5:6].
     We split the immediate into two portions hence.
     '''
-    IMM_MAX = 0b011111111111
-    IMM_MIN = -0b100000000000
+    IMM_MAX = 0b01111
+    IMM_MIN = -0b10000
 
-    if (imm10 > IMM_MAX) or (imm10 < IMM_MIN):
+    if (imm5 > IMM_MAX) or (imm5 < IMM_MIN):
         cp.cprint_warn("Warning:" + str(lineno) + ":" +
                        " Immediate is too big, will overflow.")
     # Convert to 2's complement binary
-    imm2 = format(imm10 if imm10 >= 0 else (1 << 12) + imm10, '012b')
-    if imm2[-1] != 0:
-        cp.cprint_warn("Warning:" + str(lineno) + ":" +
-                       "Immediate not 2 bytes aligned. Last bit will" +
-                       "be dropped.")
-    imm2 = imm2[0:12]
+    imm2 = format(imm5 if imm5 >= 0 else (1 << 5) + imm5, '05b')
+    imm2 = imm2[0:5]
     # Convert immediate back to base 10 from base 2
     # p[0] = int(imm2, 2)
-    assert(len(imm2) == 12)
-    imm_11_5 = imm2[:7]
-    imm_4_0 = imm2[7:]
-    assert(len(imm_11_5) + len(imm_4_0) == 12)
-    return True, (imm_11_5, imm_4_0), p_statement_none
+    assert(len(imm2) == 5)
+    imm_15_16 = imm2[:2]
+    imm_2_0 = imm2[2:]
+    assert(len(imm_15_16) + len(imm_2_0) == 5)
+    return True, (imm_15_16, imm_2_0), p_statement_none
 
 
 def get_imm_SB(imm10, lineno):
@@ -456,12 +444,14 @@ def parse_pass_one(fin, args):
     cp.warn = False
     cp.warn8 = False
     for line in fin:
+        print(line)
         result = parser.parse(line)
+        print(result)
         if result["tokens"] is None:
             continue
 
         if result['type'] == 'non_label':
-            address += 4
+            address += 1
             continue
 
         if not result['tokens']['label'] in symbols_table:
@@ -512,7 +502,7 @@ def parse_pass_two(fin, fout, symbols_table, args):
 
         # Use hex instead of binary
         if args['hex']:
-            instr = '%08X' % int(instr, 2)
+            instr = '%04X' % int(instr, 2)
         # Echo to console
         if args['echo']:
             cp.cprint_msgb(str(result['lineno']) + " " + str(instr))
@@ -521,7 +511,7 @@ def parse_pass_two(fin, fout, symbols_table, args):
             pprint(instr_dict)
 
         fout.write(instr + '\n')
-        address += 4
+        address += 1
 
 
 def parse_input(infile, **kwargs):

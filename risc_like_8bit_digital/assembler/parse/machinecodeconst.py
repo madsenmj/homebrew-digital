@@ -57,15 +57,17 @@ class MachineCodeConst:
                  ]
     # All instruction in a type
     INSTR_TYPE_N = [INSTR_NOP]
-    INSTR_TYPE_U = [INSTR_LI, INSTR_AIPC, INSTR_ADDI,INSTR_SUBI,
+    INSTR_TYPE_U = [INSTR_ADDI,INSTR_SUBI,
                     INSTR_MULI,INSTR_SLLI,INSTR_SRLI,
                     INSTR_ANDI,INSTR_ORI,INSTR_XORI]
-    INST_TYPE_UJ = [INSTR_J,INSTR_JR,INSTR_JAL]
+    INSTR_TYPE_US = [INSTR_LI, INSTR_AIPC]
+    INSTR_TYPE_UJ = [INSTR_J,INSTR_JR,INSTR_JAL]
     INSTR_TYPE_J = [INSTR_JALR]
     INSTR_TYPE_S = [INSTR_SB]
     INSTR_TYPE_B = [INSTR_BEQ, INSTR_BNE,
                      INSTR_BLTU, INSTR_BGEU]
-    INSTR_TYPE_I = [INSTR_LB, INSTR_LBU, INSTR_MV, INSTR_NEG]
+    INSTR_TYPE_I = [INSTR_LB, INSTR_LBU]
+    INSTR_TYPE_C = [INSTR_MV, INSTR_NEG]
     INSTR_TYPE_R = [INSTR_ADD, INSTR_SUB,  INSTR_MUL,
                     INSTR_SLL, INSTR_XOR,
                     INSTR_SRL, INSTR_OR, INSTR_AND]
@@ -77,19 +79,16 @@ class MachineCodeConst:
     BOP_JPBR = '11'
 
     # The instruction in each distinct binary opcode
-    INSTR_BOP_SYSTEM_I= [INSTR_NOP, INSTR_LB, INSTR_LBU]
-    INSTR_BOP_SYSTEM_U= [INSTR_AIPC, INSTR_LI]
-    INSTR_BOP_SYSTEM_S= [INSTR_SB]
-    INSTR_BOP_SYSTEM_C = [INSTR_MV, INSTR_NEG]
+    INSTR_BOP_SYSTEM = [INSTR_NOP, INSTR_LB, INSTR_LBU, INSTR_AIPC, 
+                        INSTR_LI, INSTR_SB,INSTR_MV, INSTR_NEG]
     INSTR_BOP_ARITH = [INSTR_ADD, INSTR_SUB, INSTR_MUL,
                        INSTR_SLL, INSTR_SRL, INSTR_XOR,
                         INSTR_OR, INSTR_AND]
     INSTR_BOP_ARITHI = [INSTR_ADDI, INSTR_SUBI, INSTR_MULI,
                         INSTR_ORI, INSTR_XORI, INSTR_ANDI,
-                        INSTR_SLLI, INSTR_SRLI,]
-    INSTR_BOP_JPBR = [INSTR_J, INSTR_BEQ, INSTR_JR,
-                      INSTR_BNE, INSTR_JAL, INSTR_BLTU,
-                      INSTR_JALR, INSTR_BGEU]
+                        INSTR_SLLI, INSTR_SRLI]
+    INSTR_BOP_JPBR = [ INSTR_BEQ, INSTR_BNE, INSTR_BLTU, INSTR_BGEU, 
+                      INSTR_J, INSTR_JR, INSTR_JAL, INSTR_JALR]
 
 
     # FUNCT for each instruction type

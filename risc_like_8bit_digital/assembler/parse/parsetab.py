@@ -26,13 +26,13 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
   ("S' -> program","S'",1,None,None,None),
-  ('program -> statement','program',1,'p_program_statement','parser.py',33),
-  ('program -> LABEL COLUMN NEWLINE','program',3,'p_program_label','parser.py',41),
-  ('statement -> OPCODE register COMMA register COMMA register NEWLINE','statement',7,'p_statement_R','parser.py',53),
-  ('statement -> OPCODE register COMMA register COMMA IMMEDIATE NEWLINE','statement',7,'p_statement_I_S_SB','parser.py',68),
-  ('statement -> OPCODE register COMMA IMMEDIATE NEWLINE','statement',5,'p_statement_U','parser.py',113),
-  ('statement -> OPCODE register COMMA LABEL NEWLINE','statement',5,'p_statement_UJ_LABEL','parser.py',144),
-  ('statement -> OPCODE register COMMA register COMMA LABEL NEWLINE','statement',7,'p_statement_SB__JALR_LABEL','parser.py',160),
-  ('register -> REGISTER','register',1,'p_register','parser.py',185),
-  ('statement -> NEWLINE','statement',1,'p_statement_none','parser.py',197),
+  ('program -> statement','program',1,'p_program_statement','parser.py',35),
+  ('program -> LABEL COLUMN NEWLINE','program',3,'p_program_label','parser.py',43),
+  ('statement -> OPCODE register COMMA register COMMA register NEWLINE','statement',7,'p_statement_R','parser.py',55),
+  ('statement -> OPCODE register COMMA register COMMA IMMEDIATE NEWLINE','statement',7,'p_statement_I_S','parser.py',70),
+  ('statement -> OPCODE register COMMA IMMEDIATE NEWLINE','statement',5,'p_statement_U','parser.py',115),
+  ('statement -> OPCODE register COMMA LABEL NEWLINE','statement',5,'p_statement_UJ_LABEL','parser.py',135),
+  ('statement -> OPCODE register COMMA register COMMA LABEL NEWLINE','statement',7,'p_statement_SB__JALR_LABEL','parser.py',151),
+  ('register -> REGISTER','register',1,'p_register','parser.py',176),
+  ('statement -> NEWLINE','statement',1,'p_statement_none','parser.py',188),
 ]

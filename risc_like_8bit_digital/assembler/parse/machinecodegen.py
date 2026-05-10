@@ -333,6 +333,87 @@ class MachineCodeGenerator:
         }
         return bin_str, tok_dict
 
+    def op_system_i(self, tokens):
+        '''
+        imm[4:0] rs1 rd  funct3  opcode
+
+        '''
+        opcode = tokens['opcode']
+        bin_opcode = None
+        funct3 = None
+        rd = None
+        rs1 = None
+        bin_rd = None
+        bin_rs1 = None
+        imm = None
+
+        try:
+            funct3 = self.CONST.FUNCT3_SYSTEM[opcode]
+            bin_opcode = self.CONST.BOP_SYSTEM
+            rd = tokens['rd']
+            bin_rd = self.get_bin_register(rd)
+            rs1 = tokens['rs1']
+            bin_rs1 = self.get_bin_register(rs1)
+            imm = tokens['imm']
+        except:
+            cp.cprint_fail("Internal Error: SYSTEM_I: could not parse" +
+                           "tokens in " + str(tokens['lineno']))
+            exit()
+
+        bin_str = imm  + bin_rs1 + bin_rd + funct3 + bin_opcode
+        assert(len(bin_str) == 16)
+
+        tok_dict = {
+            'opcode': bin_opcode,
+            'funct3': funct3,
+            'rd': bin_rd,
+            'rs1': bin_rs1,
+            'imm': imm
+        }
+        return bin_str, tok_dict
+
+    def op_system_s(self, tokens):
+        '''
+        imm[4:3] rs2 rs1 imm[2:0] funct3  opcode
+
+        '''
+        opcode = tokens['opcode']
+        bin_opcode = None
+        funct3 = None
+        imm_15_16 = None
+        imm_2_0 = None
+        rs1 = None
+        rs2 = None
+        bin_rs1 = None
+        bin_rs2 = None
+        imm = None
+
+        try:
+            funct3 = self.CONST.FUNCT3_SYSTEM[opcode]
+            bin_opcode = self.CONST.BOP_SYSTEM
+            rs1 = tokens['rs1']
+            rs2 = tokens['rs2']
+            bin_rs1 = self.get_bin_register(rs1)
+            bin_rs2 = self.get_bin_register(rs2)
+            imm_15_16, imm_2_0 = tokens['imm']
+        except:
+            cp.cprint_fail("Internal Error: SYSTEM_S: could not parse" +
+                           "tokens in " + str(tokens['lineno']))
+            exit()
+
+        bin_str = imm_15_16 + bin_rs2 + bin_rs1 + imm_2_0 + funct3 + bin_opcode
+        assert(len(bin_str) == 16)
+
+        tok_dict = {
+            'opcode': bin_opcode,
+            'funct3': funct3,
+            'rs1': bin_rs1,
+            'rs2': bin_rs2,
+            'imm_15_16': imm_15_16,
+            'imm_2_0': imm_2_0
+        }
+        return bin_str, tok_dict
+
     def op_arithi(self, tokens):
         '''
         imm[7:0] rd  funct3  opcode
@@ -395,7 +476,7 @@ class MachineCodeGenerator:
                            "tokens in " + str(tokens['lineno']))
             exit()
 
-        bin_str = '00' + bin_rs2 + bin_rs1 + funct3 + bin_rd + bin_opcode
+        bin_str = '00' + bin_rs2 + bin_rs1 + bin_rd + funct3 + bin_opcode
         assert(len(bin_str) == 16)
 
         tok_dict = {
@@ -423,12 +504,16 @@ class MachineCodeGenerator:
             print("Internal Error: Key not found (opcode)")
             return None
 
-        if opcode in self.CONST.INSTR_BOP_ARITHI:
+        if opcode in self.CONST.INSTR_TYPE_U:
             return self.op_arithi(tokens)
-        elif opcode in self.CONST.INSTR_BOP_ARITH:
+        elif opcode in self.CONST.INSTR_TYPE_R:
             return self.op_arith(tokens)
-        elif opcode in self.CONST.INSTR_BOP_SYSTEM_U:
+        elif opcode in self.CONST.INSTR_TYPE_US:
             return self.op_system_u(tokens)
+        elif opcode in self.CONST.INSTR_TYPE_I:
+            return self.op_system_i(tokens)
+        elif opcode in self.CONST.INSTR_TYPE_S:
+            return self.op_system_s(tokens)
         else:
             cp.cprint_fail("Error:" + str(tokens['lineno']) +
                            ": Opcode: '%s' not implemented" % opcode)
