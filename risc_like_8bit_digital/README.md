@@ -58,12 +58,6 @@ The assembler instructions are in the [README](assembler/README.md).
 
 ## TODO
 
-* Set up the clock
-* Set up the instruction memory and loader - loading from a ROM in Digital to a second memory bank (simulating loading from an external source)
-* Set up the program counter
-* Start with the ALU and the R-type instructions
-* Add the Register bank
-* Add the immediate types
 * Add branch and jump
 * Add data memory
 * Add IO and finalize CPU

@@ -466,6 +466,7 @@ def parse_pass_two(fin, fout, symbols_table, args):
     # Reset line number state
     reset_lineno()
     address = 0
+    fout.write('v2.0 raw\n')
     for line in fin:
         result = parser.parse(line)
         if result["tokens"] is None:
