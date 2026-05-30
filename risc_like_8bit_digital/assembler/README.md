@@ -1,5 +1,15 @@
 # 8-Bit RISC Assembler
 
+## Setting up Conda environment
+
+1. `conda create --name rvi`
+2. `conda activate rvi`
+3. `cd assemebler`
+4. `pip install -r requirements.txt`
+
+
+## Loading program to ROM
+
 Workload for loading program into rom:
 
 1. Open a terminal and `cd assembler`

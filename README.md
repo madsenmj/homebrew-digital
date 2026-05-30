@@ -11,6 +11,10 @@ Clone this repo to a local folder.
 
 Copy the files from the `/Digital/lib` folder into the `/common` folder - the `.gitignore` will not post these to the repo. The other common files in that folder will be used in these projects. Then update the "Settings->Library" to point to this new location.
 
+## Running Ditigal
+
+`java -jar Digital.jar` to run on non-windows systems
+
 ## Projects
 
 * [Ben Eater's 8-bit Computer from ICs](eater_ic/README.md)
