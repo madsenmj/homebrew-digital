@@ -17,6 +17,7 @@ Copy the files from the `/Digital/lib` folder into the `/common` folder - the `.
 * [Ben Eater's 8-bit Computer using native Digital components](eater_digital/README.md)
 * [Ben Eater's 8-bit Computer built from relays](eater_relay/README.md)
 * [An implementation of the RISC-V rv32i architecture with an 8-part tutorial](rv32i_digital/README.md)
+* [A Transport-triggered Architecture Digital CPU](tta_digital/README.md)
 * TODO: [A RISC-like 8-bit CPU](risc_like_8bit_digital/README.md)
 * TODO: [A RISC-like 8-bit CPU built with relays](risc_like_8bit_relay/README.md)
 * TODO: [A RISC-V rv32i CPU built out of relays](rv32i_relay/README.md)
